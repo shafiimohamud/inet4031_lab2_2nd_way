@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lakebound Transportation · loader preview</title>
+<style>
+  :root { --navy: #102344; --teal: #3fa89c; --ink: #1c2b45; --muted: #5b6b82; --tint: #f3f8f8; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); background: #fff; line-height: 1.5; }
+  header { display: flex; align-items: center; gap: 12px; padding: 14px clamp(16px, 5vw, 48px); border-bottom: 1px solid #e6ecef; }
+  header svg { width: 38px; height: auto; flex: none; }
+  header b { font-size: 15px; letter-spacing: .06em; color: var(--navy); }
+  header span { margin-left: auto; font-size: 12px; color: var(--muted); border: 1px solid #d5dee3; border-radius: 99px; padding: 3px 10px; white-space: nowrap; }
+  main { padding: clamp(28px, 7vw, 72px) clamp(16px, 5vw, 48px); background: linear-gradient(180deg, var(--tint), #fff 70%); }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { margin: 0 0 12px; font-size: clamp(28px, 6vw, 46px); line-height: 1.1; letter-spacing: -.02em; color: var(--navy); }
+  h1 em { font-style: normal; color: var(--teal); }
+  p.lead { margin: 0 0 28px; max-width: 56ch; color: var(--muted); font-size: clamp(15px, 2.4vw, 18px); }
+  .card { background: #fff; border: 1px solid #e1e8ec; border-radius: 16px; padding: clamp(16px, 4vw, 26px); box-shadow: 0 12px 34px -22px rgba(16, 35, 68, .45); }
+  .card h2 { margin: 0 0 4px; font-size: 17px; color: var(--navy); }
+  .card p { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; }
+  button { font: inherit; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 10px; padding: 10px 16px; border: 1px solid var(--navy); background: var(--navy); color: #fff; }
+  button.alt { background: #fff; color: var(--navy); border-color: #c9d4db; }
+  button:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+  ul { margin: 22px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+  li { background: #fff; border: 1px solid #e1e8ec; border-left: 3px solid var(--teal); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; color: var(--muted); }
+  li b { display: block; color: var(--navy); font-size: 14px; }
+</style>
+</head>
+<body>
+<!-- ───────────── Lakebound Transportation · logo loader ─────────────
+     Paste this whole block as the FIRST thing inside <body>.
+     Options (attributes on #lb-loader):
+       data-ready="auto"    hide when the page has finished loading (default)
+       data-ready="manual"  stay until your app calls  LakeboundLoader.done()
+       data-show="entry"    show on first open + refresh, skip in-site link clicks (default)
+       data-show="always"   show on every full page load
+       data-max-wait="8000" safety net: never stay longer than this many ms
+     ─────────────────────────────────────────────────────────────────── -->
+<style id="lb-loader-css">
+  #lb-loader {
+    position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 2147483647;
+    display: flex; align-items: center; justify-content: center;
+    background: #fff; opacity: 1; will-change: opacity;
+    transition: opacity .45s cubic-bezier(.4, 0, 1, 1), visibility 0s linear .45s;
+    /* CSS-only safety net in case scripts fail: the screen can never get stuck */
+    animation: lb-failsafe .4s ease 12s forwards;
+  }
+  #lb-loader.lb-hide { opacity: 0; visibility: hidden; pointer-events: none; }
+
+  #lb-loader .lb-logo {
+    display: block; overflow: visible;
+    width: 240px; width: clamp(184px, 52vw, 288px); height: auto; max-height: 70vh;
+    transition: transform .45s cubic-bezier(.4, 0, 1, 1);
+  }
+  #lb-loader.lb-hide .lb-logo { transform: scale(1.03); }
+  #lb-loader .lb-navy, #lb-loader .lb-navy * { fill: #102344; }
+  #lb-loader .lb-teal, #lb-loader .lb-teal * { fill: #3fa89c; }
+
+  /* ── assembly: each piece of the logo glides into place ── */
+  #lb-loader .lb-p {
+    opacity: 0;
+    animation-duration: .58s;
+    animation-timing-function: cubic-bezier(.22, 1, .36, 1);
+    animation-fill-mode: both;
+  }
+  #lb-loader .lb-l       { animation-name: lb-from-left;    animation-delay: 0s;   animation-duration: .6s; }
+  #lb-loader .lb-blade   { animation-name: lb-from-left-s;  animation-delay: .06s; animation-duration: .6s; }
+  #lb-loader .lb-t-stem  { animation-name: lb-from-below;   animation-delay: .2s; }
+  #lb-loader .lb-t-bar   { animation-name: lb-from-left-s;  animation-delay: .28s; }
+  #lb-loader .lb-base    { animation-name: lb-from-below-s; animation-delay: .34s; }
+  #lb-loader .lb-arrow   { animation-name: lb-from-left;    animation-delay: .46s; animation-duration: .6s; }
+  #lb-loader .lb-swoosh  { animation-name: lb-sweep-up;     animation-delay: .54s; animation-duration: .6s; }
+  #lb-loader .lb-cross   { animation-name: lb-cross;        animation-delay: .86s; animation-duration: .5s; transform-origin: 240.1px 360.7px; }
+  #lb-loader .lb-word    { animation-name: lb-rise;         animation-delay: 1s;   animation-duration: .5s; }
+
+  @keyframes lb-from-left    { 0% { opacity: 0; transform: translateX(-112px); } 50% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+  @keyframes lb-from-left-s  { 0% { opacity: 0; transform: translateX(-62px); }  50% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+  @keyframes lb-from-below   { 0% { opacity: 0; transform: translateY(42px); }   50% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+  @keyframes lb-from-below-s { 0% { opacity: 0; transform: translateY(22px); }   50% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+  @keyframes lb-sweep-up     { 0% { opacity: 0; transform: translate(-24px, 92px); } 50% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+  @keyframes lb-cross        { 0% { opacity: 0; transform: scale(.84); } 100% { opacity: 1; transform: none; } }
+  @keyframes lb-rise         { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: none; } }
+
+  /* soft teal glow behind the medical cross: blooms once, then pulses with the breathing */
+  #lb-loader .lb-glow {
+    opacity: 0;
+    animation: lb-glow 1.05s ease-out .86s both, lb-glow-breathe 3.2s ease-in-out 2s infinite;
+  }
+  @keyframes lb-glow         { 0% { opacity: 0; } 40% { opacity: .8; } 100% { opacity: 0; } }
+  @keyframes lb-glow-breathe { 0%, 100% { opacity: 0; } 50% { opacity: .5; } }
+
+  /* still loading after the logo is complete: a very subtle breath instead of a spinner */
+  #lb-loader .lb-mark {
+    transform-origin: 240.0px 226.8px;
+    animation: lb-breathe 3.2s ease-in-out 2s infinite;
+  }
+  @keyframes lb-breathe  { 0%, 100% { transform: none; } 50% { transform: scale(1.022); } }
+  @keyframes lb-failsafe { to { opacity: 0; visibility: hidden; } }
+
+  /* visitors who prefer reduced motion get the finished logo and a plain fade */
+  @media (prefers-reduced-motion: reduce) {
+    #lb-loader .lb-p, #lb-loader .lb-mark, #lb-loader .lb-glow { animation: none; transform: none; }
+    #lb-loader .lb-p { opacity: 1; }
+    #lb-loader, #lb-loader .lb-logo { transition-duration: .2s, 0s; transition-delay: 0s, .2s; }
+    #lb-loader.lb-hide .lb-logo { transform: none; }
+  }
+</style>
+<noscript><style>#lb-loader { display: none; }</style></noscript>
+
+<div id="lb-loader" data-ready="manual" data-show="always" role="status" aria-label="Loading Lakebound Transportation">
+<script>
+(function (w, d) {
+  var el = d.currentScript.parentNode, gone = false;
+
+  function remove() { if (el.parentNode) el.parentNode.removeChild(el); }
+
+  // Only greet people arriving at (or refreshing) the site, not every in-site link click.
+  if (el.getAttribute('data-show') !== 'always') {
+    try {
+      var nav = performance.getEntriesByType('navigation')[0], type = nav ? nav.type : 'navigate';
+      var inSite = d.referrer && new URL(d.referrer).origin === location.origin;
+      if (type === 'back_forward' || (type === 'navigate' && inSite)) {
+        el.style.display = 'none';
+        d.addEventListener('DOMContentLoaded', remove);
+        w.LakeboundLoader = { done: function () {} };
+        return;
+      }
+    } catch (e) {}
+  }
+
+  function done() {
+    if (gone) return;
+    gone = true;
+    // Page ready before the logo finished assembling? Don't make anyone wait:
+    // let the remaining pieces settle quickly while the screen is already fading.
+    try {
+      var left = 0, anims = el.getAnimations({ subtree: true }).filter(function (a) {
+        var t = a.effect && a.effect.getComputedTiming();
+        return t && t.iterations !== Infinity && a.effect.target !== el;
+      });
+      anims.forEach(function (a) {
+        if (a.effect.target.classList.contains('lb-p'))
+          left = Math.max(left, a.effect.getComputedTiming().endTime - (a.currentTime || 0));
+      });
+      if (left > 250) anims.forEach(function (a) { a.playbackRate = left / 250; });
+    } catch (e) {}
+    el.classList.add('lb-hide');
+    var timer = setTimeout(remove, 900);
+    el.addEventListener('transitionend', function (e) {
+      if (e.target === el) { clearTimeout(timer); remove(); }
+    });
+  }
+
+  w.LakeboundLoader = { done: done };
+  if (el.getAttribute('data-ready') !== 'manual') {
+    if (d.readyState === 'complete') done(); else w.addEventListener('load', done);
+  }
+  w.addEventListener('pageshow', function (e) { if (e.persisted) done(); });
+  setTimeout(done, +el.getAttribute('data-max-wait') || 8000);
+})(window, document);
+</script>
+<svg class="lb-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 582.5" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="lb-glow-blur" filterUnits="userSpaceOnUse" x="145" y="267" width="190" height="187">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+  </defs>
+  <g class="lb-mark">
+    <g class="lb-teal">
+      <path class="lb-p lb-arrow" d="M368.1 94.7C357.1 95.8 345.7 95.1 334.7 95.2L270.7 95.3C260.1 95.4 240.9 94.2 231.2 96.3C211.4 100.7 190.1 118 188.7 139.3C193 141.9 202.6 140.7 208.1 140.8L253.1 140.7C255.4 140.7 272.7 140.2 273.5 140.9C273.9 141.3 273.7 142.3 273.9 142.8C279.1 140.7 286.4 141.8 292.1 141.8C304.6 141.8 317.7 140.9 330.1 142.2C330.6 141.7 330.5 141.1 331.2 140.7C332.8 139.9 352.7 140.8 355.7 141.2C355.8 143.5 353.9 155.2 354.3 156L355.8 157.6C369.4 150 386.8 137.2 400.5 128.3C404.5 125.7 414.6 121.6 412.6 115.4C411.5 112 407.3 109.4 404.6 107.3L386 92.2C384.6 91.1 377 85.6 376.8 84.5C376.7 83.9 377.2 83.4 377.3 82.8C375.3 82.5 373.7 81.9 371.7 81.3C370.2 85.6 369.6 90.3 368.1 94.7Z"/>
+      <path class="lb-p lb-swoosh" d="M386 194.3C387 201.2 380.4 222.3 378.2 230.2C368.6 265.8 353.7 300.2 329.6 328.4C322.5 336.7 314.5 344.4 306.4 351.8C303.2 354.9 296.9 359 294.8 362.7C293 365.8 294.9 370.7 295.1 374.1C295.6 380.4 294.7 386.8 292.7 392.8C290.5 399.6 287 406 282.8 411.7C280.1 415.5 275.9 418.7 276.2 423.5C288.9 417.5 312.3 398.6 323.6 388.9C339.3 375.5 354.9 361.7 367.6 345.4C399.3 304.9 416.3 255 427.1 205.3C430.7 188.6 433.3 171.9 435.7 155C437 146.2 439.3 132.8 438.1 124.4L436.9 123.8C435.3 123.9 420.6 135.3 418.2 137.1C401.5 149.3 384.6 161.2 367.7 173.1C363.5 176.1 347.2 184.9 350.5 190.9C352.2 194 357.1 193.5 360.1 193.6C368.5 193.7 377.8 192.5 386 194.3Z"/>
+    </g>
+    <g class="lb-navy">
+      <path class="lb-p lb-blade" d="M65.3 240.7C69.5 230.2 75.2 201.9 78.2 189.4C79.9 182.2 85.5 163.8 85.7 157.8C85.9 151.3 84.3 144.3 83.7 137.9C82.7 127 80.9 89.1 83.1 80C85.2 71.1 103.8 69.4 107.1 65.2C108.8 63.1 110.7 52.1 111.5 48.9C113.1 42.4 114.7 35.9 117.1 29.6C118.5 25.8 120.6 22 121.6 18.1C115.2 18.5 108 22 101.8 24.3C87.6 29.5 54.5 41.7 47.1 54.7C41.6 64.3 41.8 91.4 41.7 103.1C41.7 135.5 45.7 167.5 53 199.1C55.7 210.9 60.1 230.3 65.3 240.7Z"/>
+      <path class="lb-p lb-base" d="M92.1 312.9C96.8 325.6 111 343.7 120.2 354C143.2 379.6 169.8 401.7 198.3 420.7C207.8 427 217.4 433 227.2 438.7C229.8 440.2 236.9 444.9 239.5 445.3C243 445.7 256.6 436.5 260.2 434.4C265 431.5 274.3 426.2 278.1 422.4C279.2 421.3 279.9 419.3 281 418C294.6 401.4 301 383.1 295.8 361.8L295 362.2C293.7 363.8 292.6 369.9 289.8 373.5C282.3 383.3 272.8 381.4 262 382.6C260.4 390 262.2 397.9 257 404.5C247.9 416.1 229.4 414 222.1 401.7C218.7 396 219.4 389 218.7 382.7C212 381.5 205 383.2 198.7 379.8C186.7 373.5 189.3 366.6 185.9 362.8C184 360.7 171.2 351.3 166.6 346.9C161 341.5 155.5 335.9 150.5 329.9C147.1 325.8 144.1 321.3 140.4 317.5C127.7 316.8 115.1 318.3 102.6 315.8C99 315.1 95.4 313.7 92.1 312.9Z"/>
+      <path class="lb-p lb-l" d="M229.2 299.7C231.2 293.7 235.8 259.2 236.4 251.4C226.8 249.7 180.9 250.7 167.6 250.7C163.5 250.7 144.6 251.4 142.3 249.5C137.8 246 140.9 238.2 142 233.9L152.7 190.1C162.3 150.8 171.1 111.2 181.1 72C184.7 57.6 188.2 43.2 191.5 28.7C192.9 22.5 195.7 15.5 195.5 9.4C191.2 9 186.6 9.6 182.1 9.9C166.5 10.8 150.8 13.3 140 25.8C137 29.2 134.7 33.1 133 37.3C129 47 124.2 70.5 121.5 81.8L104.4 152.8C100.5 168.9 96.1 185.1 92.5 201.3C89.1 216.9 84.8 232.4 81.1 247.9C78 261.3 75.5 273.7 83.6 286C93 300.2 110.2 299.8 125.2 299.8L190.2 300C203.2 300 216.3 300.3 229.2 299.7Z"/>
+      <path class="lb-p lb-t-stem" d="M274.2 140.9C273 147.3 272.4 153.8 271.5 160.2L261.4 231L255.9 270.1C254.5 279.6 252.4 289.3 252 298.8C255.9 299.6 260 299.6 263.9 300.3C277 302.7 289.8 308.4 298.4 318.8C300.7 321.5 302.4 324.6 304.4 327.4C306.9 319.4 312.3 273.1 313.9 261.2L325.2 178C326.9 165.6 329 153.3 330.3 140.9C321.2 139.2 307.7 140.3 298 140.3C290.3 140.3 281.5 139.2 274.2 140.9Z"/>
+      <path class="lb-p lb-t-bar" d="M383.1 23.1C369.5 24.7 355.3 23.7 341.6 23.7L265.1 23.8C257.2 23.9 231.7 23.1 225.6 24.2C223.4 24.6 221.1 25.7 219.3 27.1C217 28.7 215 30.9 213.8 33.5C211.6 38.3 204.6 68.2 204.2 73.7C214.5 75.3 243.4 74.2 255.6 74.2L332.6 74.2C345.9 74.2 359.2 73.9 372.5 74.3C372.6 77 371.9 79.5 371.5 82.1L375.7 84.4L416.2 57.6C419.8 55.1 429.1 50.5 431 46.7C433.2 42.3 425.7 37.8 422.8 35.5L399.2 16.2C396.8 14.2 391.7 9 389 8.1L387.5 8.1C384.4 12.1 384.5 18.2 383.1 23.1Z"/>
+    </g>
+    <path class="lb-glow lb-teal" filter="url(#lb-glow-blur)" d="M224 345.2C216.9 346 208 343.9 201.4 347.7C190.9 353.6 191.5 369.7 202.2 375.2C208.2 378.3 217.2 376.5 223.9 377.4C225.4 384.3 223 392.4 227 398.8C233 408.4 248 408.3 253.8 398.4C257.4 392.2 255.9 384.2 256.4 377.3C263.5 376.6 272.1 378.4 278.5 374.8C288.8 369.2 289.3 353.4 278.8 347.6C272.2 344 263.8 346.2 256.7 345.3C255.6 338.5 257.7 330.5 254.1 324.2C247.7 313.1 231.5 314.3 226.1 325.5C223.2 331.5 225.1 338.8 224 345.2Z"/>
+    <g class="lb-p lb-cross">
+      <path class="lb-teal" d="M224 345.2C216.9 346 208 343.9 201.4 347.7C190.9 353.6 191.5 369.7 202.2 375.2C208.2 378.3 217.2 376.5 223.9 377.4C225.4 384.3 223 392.4 227 398.8C233 408.4 248 408.3 253.8 398.4C257.4 392.2 255.9 384.2 256.4 377.3C263.5 376.6 272.1 378.4 278.5 374.8C288.8 369.2 289.3 353.4 278.8 347.6C272.2 344 263.8 346.2 256.7 345.3C255.6 338.5 257.7 330.5 254.1 324.2C247.7 313.1 231.5 314.3 226.1 325.5C223.2 331.5 225.1 338.8 224 345.2Z"/>
+      <rect class="lb-navy" x="224.8" y="344.8" width="31.7" height="32.6" opacity=".28"/>
+      <path class="lb-navy" d="M224.8 346.1C224.8 351.1 225.6 356.6 228 361.1C232.9 370.7 245.3 377.4 255.8 376.6C256.5 360.1 241.6 344.8 224.8 346.1Z"/>
+    </g>
+  </g>
+  <g class="lb-p lb-word lb-navy">
+    <path d="M38.5 527.5L1.5 527.5L1.5 477L13.2 477L13.2 518.0L38.5 518.0L38.5 527.5ZM49.7 527.5L37.7 527.5L60.2 477L71.8 477L94.4 527.5L82.1 527.5L77.6 516.7L54.2 516.7L49.7 527.5ZM57.9 507.8L73.9 507.8L65.9 488.5L57.9 507.8ZM110.5 527.5L98.9 527.5L98.9 477L110.5 477L110.5 500.6L132.9 477L145.9 477L125.0 499.5L147.1 527.5L133.5 527.5L117.3 507.7L110.5 514.7L110.5 527.5ZM190.7 527.5L151.6 527.5L151.6 477L189.8 477L189.8 486.4L163.2 486.4L163.2 497.3L186.7 497.3L186.7 506.4L163.2 506.4L163.2 518.1L190.7 518.1L190.7 527.5ZM225.4 527.5L199.3 527.5L199.3 477L224.0 477Q233.5 477 238.3 480.6Q243.1 484.2 243.1 490.1L243.1 490.1Q243.1 494.1 241.2 497.0L241.2 497.0Q239.4 499.7 236.5 501.2L236.5 501.2Q237.2 501.5 237.8 501.7L237.8 501.7Q241.5 503.3 243.6 506.3Q245.6 509.3 245.6 513.7L245.6 513.7Q245.6 520.2 240.5 523.9Q235.4 527.5 225.4 527.5L225.4 527.5ZM210.9 506.2L210.9 518.7L224.6 518.7Q229.1 518.7 231.5 517.2Q233.8 515.7 233.8 512.5L233.8 512.5Q233.8 509.3 231.5 507.8Q229.1 506.2 224.6 506.2L224.6 506.2L210.9 506.2ZM210.9 485.8L210.9 497.7L222.5 497.7Q226.8 497.7 229.1 496.2Q231.3 494.7 231.3 491.7L231.3 491.7Q231.3 488.8 229.1 487.3Q226.8 485.8 222.5 485.8L222.5 485.8L210.9 485.8ZM278.3 528.4L278.3 528.4Q272.3 528.4 267.3 526.4Q262.2 524.5 258.4 520.9Q254.7 517.4 252.7 512.6Q250.6 507.9 250.6 502.3L250.6 502.3Q250.6 496.6 252.7 491.9Q254.7 487.1 258.5 483.6Q262.2 480.0 267.3 478.1Q272.3 476.1 278.3 476.1L278.3 476.1Q284.2 476.1 289.3 478.1Q294.3 480.0 298.0 483.6Q301.7 487.1 303.8 491.8Q305.9 496.6 305.9 502.3L305.9 502.3Q305.9 507.9 303.8 512.7Q301.7 517.5 298.0 521.0Q294.3 524.5 289.3 526.4Q284.2 528.4 278.3 528.4ZM278.3 518.4L278.3 518.4Q281.6 518.4 284.5 517.3Q287.3 516.1 289.5 513.9Q291.7 511.8 292.9 508.8Q294.1 505.9 294.1 502.3L294.1 502.3Q294.1 498.6 292.9 495.7Q291.7 492.7 289.5 490.6Q287.4 488.4 284.5 487.2Q281.6 486.1 278.3 486.1L278.3 486.1Q274.9 486.1 272.0 487.2Q269.2 488.4 267.0 490.6Q264.8 492.7 263.6 495.7Q262.5 498.6 262.5 502.3L262.5 502.3Q262.5 505.8 263.6 508.8Q264.8 511.8 267.0 513.9Q269.1 516.1 272.0 517.3Q274.9 518.4 278.3 518.4ZM336.4 528.4L336.4 528.4Q325.7 528.4 319.6 522.4Q313.5 516.4 313.5 505.3L313.5 505.3L313.5 477L325.2 477L325.2 504.8Q325.2 512.1 328.2 515.2Q331.2 518.4 336.5 518.4L336.5 518.4Q341.8 518.4 344.8 515.2Q347.7 512.1 347.7 504.8L347.7 504.8L347.7 477L359.3 477L359.3 505.3Q359.3 516.4 353.2 522.4Q347.2 528.4 336.4 528.4ZM381.7 527.5L370.1 527.5L370.1 477L379.8 477L404.9 507.7L404.9 477L416.4 477L416.4 527.5L406.8 527.5L381.7 496.8L381.7 527.5ZM450.7 527.5L427.7 527.5L427.7 477L450.7 477Q458.9 477 465.2 480.1Q471.4 483.3 475.0 488.9Q478.5 494.5 478.5 502.3L478.5 502.3Q478.5 509.9 475.0 515.6Q471.4 521.2 465.2 524.4Q458.9 527.5 450.7 527.5L450.7 527.5ZM439.4 486.6L439.4 517.9L450.1 517.9Q455.1 517.9 458.8 516.0Q462.6 514.1 464.6 510.5Q466.7 507.0 466.7 502.3L466.7 502.3Q466.7 497.4 464.6 493.9Q462.6 490.4 458.8 488.5Q455.1 486.6 450.1 486.6L450.1 486.6L439.4 486.6Z"/>
+    <path d="M33.3 574.5L25.7 574.5L25.7 548.0L15.3 548.0L15.3 541.8L43.7 541.8L43.7 548.0L33.3 548.0L33.3 574.5ZM54.8 574.5L47.3 574.5L47.3 541.8L61.2 541.8Q68.1 541.8 71.8 545.0Q75.6 548.1 75.6 553.7L75.6 553.7Q75.6 557.3 73.9 559.9Q72.2 562.6 69.0 564.0L69.0 564.0Q69.0 564.0 69.0 564.0L69.0 564.0L76.2 574.5L68.1 574.5L61.8 565.4Q61.6 565.4 61.4 565.4L61.4 565.4L54.8 565.4L54.8 574.5ZM54.8 548.0L54.8 559.4L61.0 559.4Q64.5 559.4 66.2 557.8Q68.0 556.3 68.0 553.7L68.0 553.7Q68.0 551.0 66.2 549.5Q64.5 548.0 61.0 548.0L61.0 548.0L54.8 548.0ZM84.5 574.5L76.8 574.5L91.4 541.8L98.8 541.8L113.4 574.5L105.5 574.5L102.6 567.5L87.4 567.5L84.5 574.5ZM89.9 561.7L100.2 561.7L95.0 549.2L89.9 561.7ZM123.8 574.5L116.3 574.5L116.3 541.8L122.6 541.8L138.8 561.7L138.8 541.8L146.3 541.8L146.3 574.5L140.1 574.5L123.8 554.6L123.8 574.5ZM164.3 575.1L164.3 575.1Q160.4 575.1 156.8 574.0Q153.2 573.0 151.0 571.3L151.0 571.3L153.5 565.6Q155.6 567.1 158.5 568.0Q161.4 569.0 164.3 569.0L164.3 569.0Q166.6 569.0 167.9 568.5Q169.3 568.1 170.0 567.3Q170.6 566.5 170.6 565.5L170.6 565.5Q170.6 564.2 169.6 563.4Q168.6 562.6 166.9 562.1Q165.2 561.7 163.2 561.2Q161.2 560.8 159.1 560.1Q157.1 559.5 155.4 558.4Q153.7 557.4 152.7 555.7Q151.6 554.0 151.6 551.4L151.6 551.4Q151.6 548.6 153.1 546.3Q154.7 544.0 157.7 542.6Q160.8 541.2 165.4 541.2L165.4 541.2Q168.5 541.2 171.5 542.0Q174.5 542.7 176.8 544.1L176.8 544.1L174.4 549.9Q172.1 548.6 169.8 547.9Q167.6 547.3 165.4 547.3L165.4 547.3Q163.2 547.3 161.8 547.8Q160.4 548.3 159.7 549.2Q159.1 550.0 159.1 551.0L159.1 551.0Q159.1 552.3 160.2 553.1Q161.2 553.9 162.9 554.3Q164.6 554.8 166.6 555.3Q168.6 555.7 170.7 556.3Q172.7 556.9 174.4 558.0Q176.1 559.0 177.1 560.7Q178.2 562.4 178.2 564.9L178.2 564.9Q178.2 567.7 176.6 570.0Q175.1 572.3 172.0 573.7Q169.0 575.1 164.3 575.1ZM190.4 574.5L182.8 574.5L182.8 541.8L197.0 541.8Q201.4 541.8 204.5 543.2Q207.7 544.6 209.4 547.3Q211.2 550.0 211.2 553.7L211.2 553.7Q211.2 557.3 209.4 560.0Q207.7 562.6 204.5 564.1Q201.4 565.5 197.0 565.5L197.0 565.5L190.4 565.5L190.4 574.5ZM190.4 548.0L190.4 559.3L196.5 559.3Q200.0 559.3 201.8 557.8Q203.5 556.3 203.5 553.7L203.5 553.7Q203.5 551.0 201.8 549.5Q200.0 548.0 196.5 548.0L196.5 548.0L190.4 548.0ZM232.3 575.1L232.3 575.1Q228.5 575.1 225.2 573.8Q221.9 572.5 219.5 570.2Q217.1 568.0 215.7 564.9Q214.4 561.8 214.4 558.1L214.4 558.1Q214.4 554.5 215.7 551.4Q217.1 548.3 219.5 546.1Q221.9 543.8 225.2 542.5Q228.5 541.2 232.3 541.2L232.3 541.2Q236.2 541.2 239.4 542.5Q242.7 543.8 245.1 546.1Q247.5 548.3 248.8 551.4Q250.2 554.5 250.2 558.1L250.2 558.1Q250.2 561.8 248.8 564.9Q247.5 568.0 245.1 570.3Q242.7 572.5 239.4 573.8Q236.2 575.1 232.3 575.1ZM232.3 568.6L232.3 568.6Q234.5 568.6 236.3 567.9Q238.2 567.1 239.6 565.7Q241.0 564.3 241.8 562.4Q242.5 560.5 242.5 558.1L242.5 558.1Q242.5 555.8 241.8 553.9Q241.0 552.0 239.6 550.6Q238.2 549.2 236.4 548.4Q234.5 547.7 232.3 547.7L232.3 547.7Q230.1 547.7 228.3 548.4Q226.4 549.2 225.0 550.6Q223.6 552.0 222.8 553.9Q222.1 555.8 222.1 558.1L222.1 558.1Q222.1 560.4 222.8 562.4Q223.6 564.3 225.0 565.7Q226.4 567.1 228.2 567.9Q230.1 568.6 232.3 568.6ZM262.9 574.5L255.4 574.5L255.4 541.8L269.3 541.8Q276.1 541.8 279.9 545.0Q283.7 548.1 283.7 553.7L283.7 553.7Q283.7 557.3 282.0 559.9Q280.3 562.6 277.1 564.0L277.1 564.0Q277.0 564.0 277.0 564.0L277.0 564.0L284.3 574.5L276.1 574.5L269.9 565.4Q269.7 565.4 269.5 565.4L269.5 565.4L262.9 565.4L262.9 574.5ZM262.9 548.0L262.9 559.4L269.1 559.4Q272.6 559.4 274.3 557.8Q276.1 556.3 276.1 553.7L276.1 553.7Q276.1 551.0 274.3 549.5Q272.6 548.0 269.1 548.0L269.1 548.0L262.9 548.0ZM303.5 574.5L295.9 574.5L295.9 548.0L285.5 548.0L285.5 541.8L314.0 541.8L314.0 548.0L303.5 548.0L303.5 574.5ZM321.0 574.5L313.2 574.5L327.8 541.8L335.2 541.8L349.9 574.5L341.9 574.5L339.0 567.5L323.8 567.5L321.0 574.5ZM326.3 561.7L336.6 561.7L331.5 549.2L326.3 561.7ZM367.1 574.5L359.5 574.5L359.5 548.0L349.1 548.0L349.1 541.8L377.5 541.8L377.5 548.0L367.1 548.0L367.1 574.5ZM388.6 574.5L381.1 574.5L381.1 541.8L388.6 541.8L388.6 574.5ZM411.7 575.1L411.7 575.1Q407.9 575.1 404.6 573.8Q401.3 572.5 398.9 570.2Q396.5 568.0 395.1 564.9Q393.8 561.8 393.8 558.1L393.8 558.1Q393.8 554.5 395.1 551.4Q396.5 548.3 398.9 546.1Q401.3 543.8 404.6 542.5Q407.9 541.2 411.7 541.2L411.7 541.2Q415.6 541.2 418.8 542.5Q422.1 543.8 424.5 546.1Q426.9 548.3 428.2 551.4Q429.6 554.5 429.6 558.1L429.6 558.1Q429.6 561.8 428.2 564.9Q426.9 568.0 424.5 570.3Q422.1 572.5 418.8 573.8Q415.6 575.1 411.7 575.1ZM411.7 568.6L411.7 568.6Q413.9 568.6 415.7 567.9Q417.6 567.1 419.0 565.7Q420.4 564.3 421.2 562.4Q421.9 560.5 421.9 558.1L421.9 558.1Q421.9 555.8 421.2 553.9Q420.4 552.0 419.0 550.6Q417.6 549.2 415.8 548.4Q413.9 547.7 411.7 547.7L411.7 547.7Q409.5 547.7 407.7 548.4Q405.8 549.2 404.4 550.6Q403.0 552.0 402.2 553.9Q401.5 555.8 401.5 558.1L401.5 558.1Q401.5 560.4 402.2 562.4Q403.0 564.3 404.4 565.7Q405.8 567.1 407.6 567.9Q409.5 568.6 411.7 568.6ZM442.2 574.5L434.8 574.5L434.8 541.8L441.0 541.8L457.3 561.7L457.3 541.8L464.8 541.8L464.8 574.5L458.5 574.5L442.2 554.6L442.2 574.5Z"/>
+  </g>
+</svg>
+</div>
+<!-- ───────────── end of Lakebound logo loader ───────────── -->
+
+<header>
+  <svg viewBox="33 0 414 454" aria-hidden="true">
+    <g data-part="lb-teal" fill="#3fa89c">
+      <path data-part="lb-arrow" d="M368.1 94.7C357.1 95.8 345.7 95.1 334.7 95.2L270.7 95.3C260.1 95.4 240.9 94.2 231.2 96.3C211.4 100.7 190.1 118 188.7 139.3C193 141.9 202.6 140.7 208.1 140.8L253.1 140.7C255.4 140.7 272.7 140.2 273.5 140.9C273.9 141.3 273.7 142.3 273.9 142.8C279.1 140.7 286.4 141.8 292.1 141.8C304.6 141.8 317.7 140.9 330.1 142.2C330.6 141.7 330.5 141.1 331.2 140.7C332.8 139.9 352.7 140.8 355.7 141.2C355.8 143.5 353.9 155.2 354.3 156L355.8 157.6C369.4 150 386.8 137.2 400.5 128.3C404.5 125.7 414.6 121.6 412.6 115.4C411.5 112 407.3 109.4 404.6 107.3L386 92.2C384.6 91.1 377 85.6 376.8 84.5C376.7 83.9 377.2 83.4 377.3 82.8C375.3 82.5 373.7 81.9 371.7 81.3C370.2 85.6 369.6 90.3 368.1 94.7Z"/>
+      <path data-part="lb-swoosh" d="M386 194.3C387 201.2 380.4 222.3 378.2 230.2C368.6 265.8 353.7 300.2 329.6 328.4C322.5 336.7 314.5 344.4 306.4 351.8C303.2 354.9 296.9 359 294.8 362.7C293 365.8 294.9 370.7 295.1 374.1C295.6 380.4 294.7 386.8 292.7 392.8C290.5 399.6 287 406 282.8 411.7C280.1 415.5 275.9 418.7 276.2 423.5C288.9 417.5 312.3 398.6 323.6 388.9C339.3 375.5 354.9 361.7 367.6 345.4C399.3 304.9 416.3 255 427.1 205.3C430.7 188.6 433.3 171.9 435.7 155C437 146.2 439.3 132.8 438.1 124.4L436.9 123.8C435.3 123.9 420.6 135.3 418.2 137.1C401.5 149.3 384.6 161.2 367.7 173.1C363.5 176.1 347.2 184.9 350.5 190.9C352.2 194 357.1 193.5 360.1 193.6C368.5 193.7 377.8 192.5 386 194.3Z"/>
+    </g>
+    <g data-part="lb-navy" fill="#102344">
+      <path data-part="lb-blade" d="M65.3 240.7C69.5 230.2 75.2 201.9 78.2 189.4C79.9 182.2 85.5 163.8 85.7 157.8C85.9 151.3 84.3 144.3 83.7 137.9C82.7 127 80.9 89.1 83.1 80C85.2 71.1 103.8 69.4 107.1 65.2C108.8 63.1 110.7 52.1 111.5 48.9C113.1 42.4 114.7 35.9 117.1 29.6C118.5 25.8 120.6 22 121.6 18.1C115.2 18.5 108 22 101.8 24.3C87.6 29.5 54.5 41.7 47.1 54.7C41.6 64.3 41.8 91.4 41.7 103.1C41.7 135.5 45.7 167.5 53 199.1C55.7 210.9 60.1 230.3 65.3 240.7Z"/>
+      <path data-part="lb-base" d="M92.1 312.9C96.8 325.6 111 343.7 120.2 354C143.2 379.6 169.8 401.7 198.3 420.7C207.8 427 217.4 433 227.2 438.7C229.8 440.2 236.9 444.9 239.5 445.3C243 445.7 256.6 436.5 260.2 434.4C265 431.5 274.3 426.2 278.1 422.4C279.2 421.3 279.9 419.3 281 418C294.6 401.4 301 383.1 295.8 361.8L295 362.2C293.7 363.8 292.6 369.9 289.8 373.5C282.3 383.3 272.8 381.4 262 382.6C260.4 390 262.2 397.9 257 404.5C247.9 416.1 229.4 414 222.1 401.7C218.7 396 219.4 389 218.7 382.7C212 381.5 205 383.2 198.7 379.8C186.7 373.5 189.3 366.6 185.9 362.8C184 360.7 171.2 351.3 166.6 346.9C161 341.5 155.5 335.9 150.5 329.9C147.1 325.8 144.1 321.3 140.4 317.5C127.7 316.8 115.1 318.3 102.6 315.8C99 315.1 95.4 313.7 92.1 312.9Z"/>
+      <path data-part="lb-L" d="M229.2 299.7C231.2 293.7 235.8 259.2 236.4 251.4C226.8 249.7 180.9 250.7 167.6 250.7C163.5 250.7 144.6 251.4 142.3 249.5C137.8 246 140.9 238.2 142 233.9L152.7 190.1C162.3 150.8 171.1 111.2 181.1 72C184.7 57.6 188.2 43.2 191.5 28.7C192.9 22.5 195.7 15.5 195.5 9.4C191.2 9 186.6 9.6 182.1 9.9C166.5 10.8 150.8 13.3 140 25.8C137 29.2 134.7 33.1 133 37.3C129 47 124.2 70.5 121.5 81.8L104.4 152.8C100.5 168.9 96.1 185.1 92.5 201.3C89.1 216.9 84.8 232.4 81.1 247.9C78 261.3 75.5 273.7 83.6 286C93 300.2 110.2 299.8 125.2 299.8L190.2 300C203.2 300 216.3 300.3 229.2 299.7Z"/>
+      <path data-part="lb-T-stem" d="M274.2 140.9C273 147.3 272.4 153.8 271.5 160.2L261.4 231L255.9 270.1C254.5 279.6 252.4 289.3 252 298.8C255.9 299.6 260 299.6 263.9 300.3C277 302.7 289.8 308.4 298.4 318.8C300.7 321.5 302.4 324.6 304.4 327.4C306.9 319.4 312.3 273.1 313.9 261.2L325.2 178C326.9 165.6 329 153.3 330.3 140.9C321.2 139.2 307.7 140.3 298 140.3C290.3 140.3 281.5 139.2 274.2 140.9Z"/>
+      <path data-part="lb-T-bar" d="M383.1 23.1C369.5 24.7 355.3 23.7 341.6 23.7L265.1 23.8C257.2 23.9 231.7 23.1 225.6 24.2C223.4 24.6 221.1 25.7 219.3 27.1C217 28.7 215 30.9 213.8 33.5C211.6 38.3 204.6 68.2 204.2 73.7C214.5 75.3 243.4 74.2 255.6 74.2L332.6 74.2C345.9 74.2 359.2 73.9 372.5 74.3C372.6 77 371.9 79.5 371.5 82.1L375.7 84.4L416.2 57.6C419.8 55.1 429.1 50.5 431 46.7C433.2 42.3 425.7 37.8 422.8 35.5L399.2 16.2C396.8 14.2 391.7 9 389 8.1L387.5 8.1C384.4 12.1 384.5 18.2 383.1 23.1Z"/>
+    </g>
+    <g data-part="lb-cross">
+      <path d="M224 345.2C216.9 346 208 343.9 201.4 347.7C190.9 353.6 191.5 369.7 202.2 375.2C208.2 378.3 217.2 376.5 223.9 377.4C225.4 384.3 223 392.4 227 398.8C233 408.4 248 408.3 253.8 398.4C257.4 392.2 255.9 384.2 256.4 377.3C263.5 376.6 272.1 378.4 278.5 374.8C288.8 369.2 289.3 353.4 278.8 347.6C272.2 344 263.8 346.2 256.7 345.3C255.6 338.5 257.7 330.5 254.1 324.2C247.7 313.1 231.5 314.3 226.1 325.5C223.2 331.5 225.1 338.8 224 345.2Z" fill="#3fa89c"/>
+      <rect x="224.8" y="344.8" width="31.7" height="32.6" fill="#102344" opacity=".28"/>
+      <path d="M224.8 346.1C224.8 351.1 225.6 356.6 228 361.1C232.9 370.7 245.3 377.4 255.8 376.6C256.5 360.1 241.6 344.8 224.8 346.1Z" fill="#102344"/>
+    </g></svg>
+  <b>LAKEBOUND TRANSPORTATION</b>
+  <span>Loader preview</span>
+</header>
+<main>
+  <div class="wrap">
+    <h1>Your homepage <em>appears here.</em></h1>
+    <p class="lead">This placeholder page stands in for the Lakebound Transportation homepage, so you can see how the loading screen hands over to it.</p>
+    <div class="card">
+      <h2>Replay the loading screen</h2>
+      <p>Each button simulates a different page-load speed.</p>
+      <div class="row">
+        <button data-ms="2200">Typical load · 2 s</button>
+        <button class="alt" data-ms="250">Fast load · 0.25 s</button>
+        <button class="alt" data-ms="7000">Slow load · 7 s</button>
+      </div>
+    </div>
+    <ul>
+      <li><b>Typical load</b>The full logo assembly plays, then the screen fades away.</li>
+      <li><b>Fast load</b>No waiting: the logo settles quickly while the screen is already fading.</li>
+      <li><b>Slow load</b>The finished logo breathes gently until the page is ready.</li>
+    </ul>
+  </div>
+</main>
+<script>
+  // Demo only: replays the loader and pretends the page takes N ms to load.
+  (function () {
+    var holder = document.getElementById('lb-loader'), html = holder.outerHTML, timer;
+    function finishAfter(ms) { clearTimeout(timer); timer = setTimeout(function () { LakeboundLoader.done(); }, ms); }
+    finishAfter(2200);
+    document.querySelectorAll('button[data-ms]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var old = document.getElementById('lb-loader');
+        if (old) old.remove();
+        document.body.insertBefore(document.createRange().createContextualFragment(html), document.body.firstChild);
+        finishAfter(+b.getAttribute('data-ms'));
+      });
+    });
+  })();
+</script>
+</body>
+</html>
