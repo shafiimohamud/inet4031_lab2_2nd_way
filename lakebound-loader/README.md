@@ -8,7 +8,8 @@ to reveal the page.
 | --- | --- |
 | `lakebound-loader.html` | The loader. One self-contained block of CSS, markup and script, with no dependencies. |
 | `demo.html` | Preview page. Open it in a browser to replay the loader at fast, typical and slow load speeds. |
-| `lakebound-logo.svg` | The logo as a standalone vector file, with each part as its own named shape. |
+| `lakebound-logo.svg` | The logo with the "LAKEBOUND TRANSPORTATION" wordmark, as a standalone vector file with each part as its own named shape. |
+| `lakebound-logo-mark.svg` | The shield logo on its own, without the wordmark. |
 
 ## Install
 
