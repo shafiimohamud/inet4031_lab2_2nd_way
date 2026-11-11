@@ -7,9 +7,14 @@ to reveal the page.
 | File | What it is |
 | --- | --- |
 | `lakebound-loader.html` | The loader. One self-contained block of CSS, markup and script, with no dependencies. |
-| `demo.html` | Preview page. Open it in a browser to replay the loader at fast, typical and slow load speeds. |
-| `lakebound-logo.svg` | The logo with the "LAKEBOUND TRANSPORTATION" wordmark, as a standalone vector file with each part as its own named shape. |
-| `lakebound-logo-mark.svg` | The shield logo on its own, without the wordmark. |
+| `demo.html` | Preview page. Open it in a browser to replay the loader at fast, typical and slow load speeds, in light or dark mode. |
+| `lakebound-logo.svg` | The logo with the "LAKEBOUND TRANSPORTATION" wordmark, for light backgrounds. Each part is its own named shape. |
+| `lakebound-logo-mark.svg` | The shield logo on its own, for light backgrounds. |
+| `lakebound-logo-dark.svg` | The logo with the wordmark for dark backgrounds: white letters and shield, teal arrows. |
+| `lakebound-logo-mark-dark.svg` | The shield logo on its own, for dark backgrounds. |
+| `lakebound-app-icon.svg` | The app icon: the dark logo on a navy rounded square. |
+
+All logo files have a transparent background except the app icon.
 
 ## Install
 
@@ -26,6 +31,8 @@ screen from the very first paint.
 - The full assembly takes about 1.5 seconds. If the page is ready sooner, the remaining pieces
   settle quickly while the screen is already fading, so nobody waits for the animation.
 - If the page takes longer, the finished logo breathes gently until the page is ready.
+- Visitors whose device is in dark mode get the dark version: a navy screen with the white and
+  teal logo, matching the app icon.
 - Visitors who have "reduce motion" turned on see the finished logo and a plain fade.
 - With JavaScript turned off the loader never appears, and it removes itself after 8 seconds
   at most (12 seconds if its script fails), so it cannot get stuck.
@@ -41,6 +48,9 @@ Set these as attributes on the `<div id="lb-loader">` element.
 | `data-show` | `entry` (default) | Show on first open and refresh only. |
 | | `always` | Show on every full page load. |
 | `data-max-wait` | milliseconds, default `8000` | The longest the loader may stay, up to 12000. |
+| `data-theme` | `auto` (default) | White screen, or the dark screen when the visitor's device is in dark mode. |
+| | `light` | Always the white screen. Use this if the site itself has no dark mode. |
+| | `dark` | Always the dark screen. |
 
 ## About the artwork
 
