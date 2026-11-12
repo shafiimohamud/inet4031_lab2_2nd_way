@@ -29,7 +29,7 @@ export default function ServicesPage() {
             const ServiceIcon = icons[service.icon];
             return (
               <article key={service.id} id={service.id} aria-labelledby={`${service.id}-title`} className="grid gap-6 md:grid-cols-[auto_1fr]">
-                <ServiceIcon className="text-link" width="3em" height="3em" />
+                <ServiceIcon className="text-teal" width="3em" height="3em" />
                 <div className="max-w-3xl">
                   <h2 id={`${service.id}-title`} className="text-[1.6rem]">
                     {service.name}
@@ -40,7 +40,7 @@ export default function ServicesPage() {
                   <ul className="mt-2 space-y-2">
                     {service.included.map((item) => (
                       <li key={item} className="flex items-start gap-3">
-                        <CheckIcon className="mt-1 flex-none text-link" />
+                        <CheckIcon className="mt-1 flex-none text-teal" />
                         <span>{item}</span>
                       </li>
                     ))}

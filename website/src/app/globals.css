@@ -20,6 +20,14 @@
   --accent: #3aa391;
   --on-accent: #0f1f3d;
   --link: #0c5a4e;
+  /* A touch darker than the true brand teal (#3aa391), reserved for icons
+     and other decorative/large-bold accents, where WCAG's lighter 3:1
+     threshold applies — never for normal body text, which needs --link's
+     much darker shade to clear the 4.5:1 that real text requires. The true
+     #3aa391 only clears about 3:1 on white and falls short of even that on
+     the slightly darker --surface mist, so it's nudged down here just
+     enough to hold 3:1 against both of this theme's light backgrounds. */
+  --teal: #359685;
   --danger: #b42318;
   --warn-bg: #fff4d6;
   --warn-ink: #5c3b00;
@@ -43,6 +51,9 @@
     --accent: #3aa391;
     --on-accent: #0b1730;
     --link: #86dccd;
+    /* No need to darken this one: on the dark backgrounds this theme uses,
+       the true brand teal already clears 3:1 (and well past it) on its own. */
+    --teal: #3aa391;
     --danger: #ffb4a8;
     --warn-bg: #4a3600;
     --warn-ink: #ffe7a8;
@@ -66,6 +77,7 @@
   --color-accent: var(--accent);
   --color-on-accent: var(--on-accent);
   --color-link: var(--link);
+  --color-teal: var(--teal);
   --color-danger: var(--danger);
   --color-warn-bg: var(--warn-bg);
   --color-warn-ink: var(--warn-ink);
