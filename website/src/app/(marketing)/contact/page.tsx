@@ -25,7 +25,7 @@ export default function ContactPage() {
               </li>
               {site.email ? (
                 <li className="flex items-center gap-3">
-                  <MailIcon className="flex-none text-link" />
+                  <MailIcon className="flex-none text-teal" />
                   <a href={`mailto:${site.email}`} className="link break-all">
                     {site.email}
                   </a>
@@ -39,7 +39,7 @@ export default function ContactPage() {
               )}
               {site.hours ? (
                 <li className="flex items-center gap-3">
-                  <ClockIcon className="flex-none text-link" />
+                  <ClockIcon className="flex-none text-teal" />
                   {site.hours}
                 </li>
               ) : (
@@ -50,7 +50,7 @@ export default function ContactPage() {
                 )
               )}
               <li className="flex items-center gap-3">
-                <PinIcon className="flex-none text-link" />
+                <PinIcon className="flex-none text-teal" />
                 {site.legalName}, {site.city}, {site.region}
               </li>
             </ul>

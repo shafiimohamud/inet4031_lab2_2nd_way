@@ -74,7 +74,7 @@ export default function HomePage() {
       <section className="bg-surface">
         <div className="container-page grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-[1.15fr_0.85fr]">
           <div>
-            <p className="font-bold text-link">Non-emergency medical transportation</p>
+            <p className="text-lg font-bold text-teal">Non-emergency medical transportation</p>
             <h1 className="mt-2 text-[2.2rem] sm:text-[3rem]">Safe, on-time rides to the care you need.</h1>
             <p className="mt-5 max-w-xl text-[1.15rem]">
               {site.name} takes you to your medical appointments and home again, door through door. Ambulatory and
@@ -90,7 +90,7 @@ export default function HomePage() {
               {["Doctor and clinic visits", "Dialysis", "Therapy appointments", "Other regular medical appointments"].map(
                 (item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <CheckIcon className="mt-1 flex-none text-link" />
+                    <CheckIcon className="mt-1 flex-none text-teal" />
                     <span>{item}</span>
                   </li>
                 ),
@@ -158,7 +158,7 @@ export default function HomePage() {
             const ServiceIcon = serviceIcons[service.icon];
             return (
               <li key={service.id} className="flex flex-col rounded-2xl border border-line bg-page p-6">
-                <ServiceIcon className="text-link" width="2.2em" height="2.2em" />
+                <ServiceIcon className="text-teal" width="2.2em" height="2.2em" />
                 <h3 className="mt-4 text-[1.2rem]">{service.name}</h3>
                 <p className="mt-2 flex-1">{service.summary}</p>
                 <Link href={`/services#${service.id}`} className="link mt-4 inline-flex min-h-11 items-center gap-2">
@@ -205,7 +205,7 @@ export default function HomePage() {
                 "One companion or caregiver is welcome to ride with you.",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
-                  <CheckIcon className="mt-1 flex-none text-link" />
+                  <CheckIcon className="mt-1 flex-none text-teal" />
                   <span>{item}</span>
                 </li>
               ))}
