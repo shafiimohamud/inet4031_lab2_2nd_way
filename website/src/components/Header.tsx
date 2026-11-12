@@ -5,6 +5,7 @@ import { ClockIcon } from "./icons";
 import { LogoMark } from "./Logo";
 import { MobileNav } from "./MobileNav";
 import { NavLinks } from "./NavLinks";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Header() {
   return (
@@ -47,6 +48,7 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <Link href="/request-a-ride" className="btn btn-primary hidden sm:inline-flex">
               Request a ride
             </Link>

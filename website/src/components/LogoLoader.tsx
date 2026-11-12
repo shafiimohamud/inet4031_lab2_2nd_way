@@ -14,6 +14,10 @@ import { crossCenter, crossOverlap, glowBox, LOGO_VIEWBOX, logoParts, markCenter
  *    animation never holds the page back.
  *  - If the page is slow, the finished logo breathes gently until it is ready.
  *  - Dark mode: navy screen, white logo, teal arrows (matches the app icon).
+ *    Follows the same manual light/dark choice as the rest of the site (see
+ *    ThemeToggle.tsx) via the [data-theme] attribute the inline script in
+ *    layout.tsx applies before this ever paints, so there is no flash of
+ *    the wrong theme even on a visitor's very first pageview.
  *  - Reduced motion: the finished logo and a plain fade.
  *  - It cannot get stuck: the script hides it after 8 seconds at most, a
  *    CSS-only fallback hides it after 12, and it never appears without JavaScript.
@@ -25,7 +29,7 @@ import { crossCenter, crossOverlap, glowBox, LOGO_VIEWBOX, logoParts, markCenter
 const css = `
 #lb-loader{--lb-bg:#fff;--lb-ink:#0f1f3d;position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#fff;background:var(--lb-bg);opacity:1;will-change:opacity;transition:opacity .45s cubic-bezier(.4,0,1,1),visibility 0s linear .45s;animation:lb-failsafe .4s ease 12s forwards}
 #lb-loader.lb-hide{opacity:0;visibility:hidden;pointer-events:none}
-@media (prefers-color-scheme:dark){#lb-loader{--lb-bg:#0f1f3d;--lb-ink:#fff}}
+:root[data-theme=dark] #lb-loader{--lb-bg:#0f1f3d;--lb-ink:#fff}
 #lb-loader .lb-logo{display:block;overflow:visible;width:240px;width:clamp(184px,52vw,288px);height:auto;max-height:70vh;transition:transform .45s cubic-bezier(.4,0,1,1)}
 #lb-loader.lb-hide .lb-logo{transform:scale(1.03)}
 #lb-loader .lb-ink,#lb-loader .lb-ink *{fill:#0f1f3d;fill:var(--lb-ink)}

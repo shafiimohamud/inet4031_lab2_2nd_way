@@ -29,16 +29,36 @@ export const metadata: Metadata = {
   formatDetection: { telephone: false },
 };
 
+// A single value, not the usual light/dark media-query pair: the browser's
+// own chrome (address bar, etc.) follows the visitor's chosen theme, not
+// their device's setting — see the inline script below and ThemeToggle.tsx.
+// That script updates this same meta tag's content live when dark is chosen.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f1f3d" },
-  ],
+  themeColor: "#ffffff",
 };
+
+// Runs before the page paints, so a visitor who previously chose dark never
+// sees a flash of the light theme first. Keep this in sync with
+// ThemeToggle.tsx, which is the only other place that reads or writes
+// localStorage's "lb-theme" key or the data-theme attribute.
+const themeInitScript = `
+(function () {
+  try {
+    if (localStorage.getItem('lb-theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      var m = document.querySelector('meta[name="theme-color"]');
+      if (m) m.setAttribute('content', '#0f1f3d');
+    }
+  } catch (e) {}
+})();
+`.trim();
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="light" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="flex min-h-screen flex-col antialiased">
         <LogoLoader />
         <a

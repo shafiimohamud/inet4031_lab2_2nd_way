@@ -59,6 +59,11 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href="/guides" className={footerLink}>
+                Guides
+              </Link>
+            </li>
           </ul>
         </nav>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Actions, PageHeader, Section } from "@/components/page";
 import { NeedsInput } from "@/components/review";
+import { ServiceAreaOverview } from "@/components/ServiceAreaOverview";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -17,15 +18,11 @@ export default function ServiceAreaPage() {
       />
       <Section>
         <div className="max-w-3xl">
-          <h2 className="text-[1.5rem]">Counties we serve</h2>
-          <ul className="mt-4 list-disc space-y-2 pl-6">
-            {site.areaServed.map((area) => (
-              <li key={area}>{area.replace(", MN", "")}</li>
-            ))}
-          </ul>
+          <ServiceAreaOverview />
           <NeedsInput>
-            The full list of counties and cities you serve (for example Shakopee, Bloomington). A simple map and one page per
-            major city come later in the plan.
+            The full list of counties and cities you serve (for example Shakopee, Bloomington). This page shows a
+            simple overview, not a literal map; a real interactive one (with your exact coverage area) is a Phase
+            2/3 addition, per the blueprint.
           </NeedsInput>
 
           <h2 className="mt-10 text-[1.5rem]">Not sure about your address?</h2>

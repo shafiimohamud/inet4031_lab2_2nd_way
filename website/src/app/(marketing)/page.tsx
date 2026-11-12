@@ -3,6 +3,8 @@ import { FaqList } from "@/components/FaqList";
 import { ArrowRightIcon, CheckIcon, RepeatIcon, WalkIcon, WheelchairIcon } from "@/components/icons";
 import { Actions, CtaBand, Section } from "@/components/page";
 import { NeedsInput, Verify } from "@/components/review";
+import { ServiceAreaOverview } from "@/components/ServiceAreaOverview";
+import { TestimonialsSection } from "@/components/Testimonials";
 import { faqs } from "@/lib/faq";
 import { services } from "@/lib/services";
 import { reviewMode, site } from "@/lib/site";
@@ -215,17 +217,19 @@ export default function HomePage() {
 
           <div>
             <h2 className="text-[1.75rem]">Where we go</h2>
-            <p className="mt-6">
-              We are based in {site.city}, Minnesota, and serve {site.serviceArea}.
-            </p>
-            <p className="mt-3">Not sure whether we come to your address? Ask us. It only takes a minute.</p>
-            <Link href="/service-area" className="link mt-4 inline-flex min-h-11 items-center gap-2">
-              See our service area
+            <div className="mt-6">
+              <ServiceAreaOverview compact />
+            </div>
+            <p className="mt-4">Not sure whether we come to your address? Ask us. It only takes a minute.</p>
+            <Link href="/service-area" className="link mt-3 inline-flex min-h-11 items-center gap-2">
+              See our full service area
               <ArrowRightIcon />
             </Link>
           </div>
         </div>
       </Section>
+
+      <TestimonialsSection />
 
       {/* Top questions */}
       <Section labelledBy="faq-title">

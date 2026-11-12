@@ -32,14 +32,29 @@ test("an unknown URL shows the not-found page instead of an error", async ({ pag
   await expect(page).toHaveURL(/\/request-a-ride$/);
 });
 
-test("robots.txt and sitemap.xml are served", async ({ request }) => {
+test("the guides index links to every guide, and each one links back", async ({ page }) => {
+  await page.goto("/guides");
+  await waitForLoader(page);
+  const links = page.getByRole("main").getByRole("link");
+  await expect(links).toHaveCount(6); // 3 titles + 3 "Read" links, one pair per guide
+
+  await page.getByRole("link", { name: "How to book a ride to dialysis" }).click();
+  await expect(page).toHaveURL(/\/guides\/booking-a-ride-to-dialysis$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("How to book a ride to dialysis");
+  await page.getByRole("link", { name: "More guides" }).click();
+  await expect(page).toHaveURL(/\/guides$/);
+});
+
+test("robots.txt and sitemap.xml are served, and the sitemap lists the guides", async ({ request }) => {
   const robots = await request.get("/robots.txt");
   expect(robots.ok()).toBe(true);
   expect(await robots.text()).toContain("Sitemap:");
 
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.ok()).toBe(true);
-  expect(await sitemap.text()).toContain("<urlset");
+  const body = await sitemap.text();
+  expect(body).toContain("<urlset");
+  expect(body).toContain("/guides/booking-a-ride-to-dialysis");
 });
 
 test("security headers are present", async ({ request }) => {

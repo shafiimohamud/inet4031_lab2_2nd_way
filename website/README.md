@@ -62,25 +62,45 @@ guessing from a separate checklist. It never appears in a real production
 build (`next build && next start`), and can be forced off earlier by setting
 `NEXT_PUBLIC_REVIEW_MODE="0"`.
 
+Because this reads `NEXT_PUBLIC_REVIEW_MODE`, and every `NEXT_PUBLIC_*`
+variable is baked into the build (not read at `next start`), setting it
+only changes anything if it is set **before** `npm run build` runs — setting
+it only when you `npm run start` has no effect on an already-built site.
+
+### Light and dark mode
+
+Light is the default for every visitor, regardless of their device's own
+setting — the moon/sun button in the header is how someone switches to dark,
+and their choice is remembered (`localStorage`) for their next visit. See
+`src/components/ThemeToggle.tsx` and the comment at the top of
+`src/app/globals.css`. An inline script in `layout.tsx` applies a remembered
+choice before the first paint, so there is no flash of the wrong theme.
+
 ## What's here
 
 ```
 src/
   app/
     (marketing)/          every public page: home, services, service-area,
-                           medicaid-and-insurance, faq, contact, and the
+                           medicaid-and-insurance, faq, contact, guides
+                           (short content/SEO pages), and the
                            privacy/terms/accessibility/nondiscrimination
                            legal pages
     request-a-ride/       the ride request form (the site's "money page")
     api/request/          receives and validates the form, emails dispatch
-    layout.tsx            the loading screen, header, footer, skip link
+    layout.tsx            the loading screen, header, footer, skip link,
+                           and the inline script that applies a remembered
+                           light/dark choice before the first paint
     not-found.tsx, robots.ts, sitemap.ts, icon.svg,
     apple-icon.tsx, opengraph-image.tsx
                            search engines, browser tab/home-screen icons,
                            and the image social platforms show when a link
                            to the site is shared
-  components/              shared UI: header/footer/nav, the ride request
-                           form, the animated logo loader, review-mode notes
+  components/              shared UI: header/footer/nav, the theme toggle,
+                           the ride request form, the testimonials section
+                           (off until real ones exist), the service-area
+                           overview, the animated logo loader, review-mode
+                           notes
   lib/
     schema.ts              the ride request's validation rules — shared by
                            the browser form and the server, so a value is
@@ -89,13 +109,17 @@ src/
     ratelimit.ts             Phase 1's rate limiter (in-memory; see below)
     site.ts                 business facts (phone, email, hours, claims)
                            read from the environment — nothing is hard-coded
-    faq.tsx, services.ts, nav.ts
+    faq.tsx, services.ts, guides.ts, testimonials.ts, nav.ts
                            page content, kept separate from page layout
 tests/
-  a11y.spec.ts             axe accessibility scan of every public page
+  a11y.spec.ts             axe accessibility scan of every public page, in
+                           both light and dark mode
+  theme.spec.ts            the light/dark toggle: defaults, persistence,
+                           and that it carries across page navigation
   ride-request.spec.ts     the form: validation, a full successful request,
                            and the server re-validating what the API receives
-  smoke.spec.ts            navigation, the 404 page, robots/sitemap, headers
+  smoke.spec.ts            navigation, the guides, the 404 page,
+                           robots/sitemap, headers
 ```
 
 The logo loader (the animated loading screen) lives in
@@ -120,6 +144,20 @@ artwork as standalone files (light and dark versions).
   with Upstash Redis once there's more than one server instance.
 - **Spam protection is a honeypot field only** (no Turnstile/CAPTCHA yet —
   that's also Phase 2).
+- **Testimonials start empty on purpose** (`src/lib/testimonials.ts`) — no
+  fake ones were ever added. The whole section stays off the live site until
+  there is at least one real entry (written permission, first name and last
+  initial, never medical details, per blueprint section 1).
+- **The service-area visual is intentionally not a literal map** — it is a
+  simple, honest "based in / serving" card (`src/components/ServiceAreaOverview.tsx`),
+  not real county-boundary geography or an embedded Google Maps iframe. A
+  real map needs either verified boundary data or a deliberate privacy/CSP
+  decision (opening up `frame-src` to Google, and Google then seeing every
+  visitor); it's a reasonable Phase 2/3 upgrade once that tradeoff is wanted.
+- **Guides are generic, not Lakebound-specific claims** (`/guides`, blueprint
+  section 8.6). They link back to the real services/FAQ/Medicaid pages for
+  anything specific, rather than asserting something here that isn't
+  established elsewhere on the site.
 - **Colors and type** follow blueprint section 7 exactly: navy `#0f1f3d`,
   teal `#3aa391`, mist `#f4f7f9`, 18px+ body text, 48px minimum tap targets.
   Every text/background color pair is checked for 4.5:1 contrast (3:1 for

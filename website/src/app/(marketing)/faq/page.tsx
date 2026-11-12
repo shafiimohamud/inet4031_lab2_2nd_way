@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { FaqList } from "@/components/FaqList";
+import { ArrowRightIcon } from "@/components/icons";
 import { CtaBand, PageHeader, Section } from "@/components/page";
 import { answeredFaqs, faqs } from "@/lib/faq";
 
@@ -28,6 +30,10 @@ export default function FaqPage() {
       <PageHeader title="Questions and answers" lead="If your question is not here, call us. We are glad to help." />
       <Section>
         <FaqList items={faqs} />
+        <Link href="/guides" className="link mt-8 inline-flex min-h-11 items-center gap-2">
+          Longer guides on booking, wheelchairs, and choosing a provider
+          <ArrowRightIcon />
+        </Link>
       </Section>
       <CtaBand />
     </>

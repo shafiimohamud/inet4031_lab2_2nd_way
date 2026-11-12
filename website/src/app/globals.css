@@ -6,6 +6,13 @@
   Every text/background pair below meets WCAG 4.5:1 (3:1 for borders and focus rings)
   in both the light and the dark theme. Teal is too light for text on white, so
   links use a darker teal and teal buttons carry navy text.
+
+  Theme switching: light is the default for every visitor, regardless of their
+  device's own setting — dark only applies once someone picks it with the
+  toggle in the header (see ThemeToggle.tsx), which sets data-theme="dark" on
+  <html> and remembers the choice in localStorage. The inline script in
+  layout.tsx applies that choice before the first paint, so there is no flash
+  of the wrong theme. This file never reads prefers-color-scheme.
 */
 :root {
   --page: #ffffff;
@@ -37,31 +44,29 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --page: #0f1f3d;
-    --surface: #172a4f;
-    --ink: #ffffff;
-    --body: #e4eaf3;
-    --muted: #b6c2d6;
-    --line: #34497a;
-    --control: #8a9bb8;
-    --brand: #ffffff;
-    --on-brand: #0f1f3d;
-    --accent: #3aa391;
-    --on-accent: #0b1730;
-    --link: #86dccd;
-    /* No need to darken this one: on the dark backgrounds this theme uses,
-       the true brand teal already clears 3:1 (and well past it) on its own. */
-    --teal: #3aa391;
-    --danger: #ffb4a8;
-    --warn-bg: #4a3600;
-    --warn-ink: #ffe7a8;
-    --ok-bg: #12403a;
-    --ok-ink: #c9f2ea;
-    --focus: #86dccd;
-    color-scheme: dark;
-  }
+:root[data-theme="dark"] {
+  --page: #0f1f3d;
+  --surface: #172a4f;
+  --ink: #ffffff;
+  --body: #e4eaf3;
+  --muted: #b6c2d6;
+  --line: #34497a;
+  --control: #8a9bb8;
+  --brand: #ffffff;
+  --on-brand: #0f1f3d;
+  --accent: #3aa391;
+  --on-accent: #0b1730;
+  --link: #86dccd;
+  /* No need to darken this one: on the dark backgrounds this theme uses,
+     the true brand teal already clears 3:1 (and well past it) on its own. */
+  --teal: #3aa391;
+  --danger: #ffb4a8;
+  --warn-bg: #4a3600;
+  --warn-ink: #ffe7a8;
+  --ok-bg: #12403a;
+  --ok-ink: #c9f2ea;
+  --focus: #86dccd;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -104,6 +109,16 @@
     font-family: var(--font-sans);
     line-height: 1.6;
   }
+
+  /* Logo.tsx: shows the light- or dark-background logo file, driven by the
+     same [data-theme] attribute as everything else (the header's logo swap
+     used to key off prefers-color-scheme directly, which a manual toggle
+     can no longer override, since the <picture>/<source media> HTML can
+     only read actual media features, not an attribute someone set with JS). */
+  .lb-logo-light { display: block; }
+  .lb-logo-dark { display: none; }
+  :root[data-theme="dark"] .lb-logo-light { display: none; }
+  :root[data-theme="dark"] .lb-logo-dark { display: block; }
 
   h1, h2, h3 {
     color: var(--ink);
