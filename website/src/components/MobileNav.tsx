@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { CloseIcon, MenuIcon } from "./icons";
 import { NavLinks } from "./NavLinks";
+import { ThemeToggle } from "./ThemeToggle";
 
 /** Menu button and drop-down panel for small screens. */
 export function MobileNav() {
@@ -50,6 +51,11 @@ export function MobileNav() {
             onNavigate={close}
             itemClassName="flex min-h-12 items-center border-b border-line py-2 font-semibold text-ink aria-[current=page]:text-link"
           />
+          {/* Mirrors the header's own ThemeToggle, which hides below sm: for
+              lack of room — this is how someone on a narrow phone reaches it. */}
+          <li className="sm:hidden">
+            <ThemeToggle labeled />
+          </li>
           <li className="pt-4 pb-2">
             <Link href="/request-a-ride" onClick={close} className="btn btn-primary w-full">
               Request a ride

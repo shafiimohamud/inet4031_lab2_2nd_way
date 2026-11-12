@@ -125,6 +125,16 @@
     font-weight: 700;
     line-height: 1.2;
     text-wrap: balance;
+    /* A single long word (e.g. "Nondiscrimination", at the h1 size, on a
+       320px phone) can be too wide for its box with nothing else allowed to
+       give: text-wrap:balance only redistributes line breaks that already
+       exist, it doesn't create new ones. hyphens lets the browser break
+       inside an overlong word at a real syllable, with a hyphen shown, using
+       the <html lang="en"> already set; overflow-wrap is the fallback for
+       the rare case a browser's hyphenation dictionary doesn't cover a word,
+       so it still breaks rather than silently spilling past the screen. */
+    hyphens: auto;
+    overflow-wrap: break-word;
   }
 
   :focus-visible {

@@ -57,6 +57,63 @@ test("robots.txt and sitemap.xml are served, and the sitemap lists the guides", 
   expect(body).toContain("/guides/booking-a-ride-to-dialysis");
 });
 
+const everyPage = [
+  "/",
+  "/request-a-ride",
+  "/services",
+  "/service-area",
+  "/medicaid-and-insurance",
+  "/faq",
+  "/contact",
+  "/privacy",
+  "/terms",
+  "/accessibility",
+  "/nondiscrimination",
+  "/guides",
+  "/guides/booking-a-ride-to-dialysis",
+  "/guides/wheelchair-transportation-what-to-expect",
+  "/guides/questions-to-ask-an-nemt-provider",
+];
+
+test("no page ever scrolls horizontally, across common phone widths", async ({ page }) => {
+  test.setTimeout(90_000); // 15 pages x 6 widths, well past the 30s default
+  // Regression test, two bugs caught this way:
+  //  1. Adding the theme toggle to the header once overflowed every page by
+  //     ~30px at 360-414px wide — the single most common phone width range
+  //     (iPhone 12/13/14 at 390, many Android phones at 360/412) — because
+  //     there wasn't room for it next to the brand name and Menu button.
+  //     Fixed by moving it into the menu panel below sm:.
+  //  2. A single long word in a page title ("Nondiscrimination", with
+  //     nothing shorter to break to) silently painted past the edge of a
+  //     320px screen without making its own box measure any wider. Fixed
+  //     with overflow-wrap on headings (globals.css) — this check is what
+  //     would catch the next page that runs into the same thing.
+  for (const width of [320, 360, 375, 390, 414, 428]) {
+    await page.setViewportSize({ width, height: 700 });
+    for (const path of everyPage) {
+      await page.goto(path);
+      await waitForLoader(page);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      expect(overflow, `${path} at ${width}px wide: page is ${overflow}px wider than the viewport`).toBeLessThanOrEqual(0);
+    }
+  }
+});
+
+test("on a narrow phone, the theme toggle lives in the menu panel instead of the header", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto("/");
+  await waitForLoader(page);
+
+  await expect(page.getByRole("button", { name: "Switch to dark theme" })).toBeHidden();
+  await page.getByRole("button", { name: "Menu" }).click();
+
+  const toggle = page.getByRole("button", { name: "Switch to dark theme" });
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.getByRole("button", { name: "Switch to light theme" })).toBeVisible();
+});
+
 test("security headers are present", async ({ request }) => {
   const response = await request.get("/");
   const headers = response.headers();

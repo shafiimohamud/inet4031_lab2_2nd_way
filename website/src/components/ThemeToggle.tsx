@@ -12,6 +12,11 @@ import { MoonIcon, SunIcon } from "./icons";
  * first paint (see the comment there), so there is no flash of the wrong
  * theme. This component's icon is computed the same way, from the same
  * stored value, so it matches from its very first render too.
+ *
+ * Rendered twice (Header.tsx and MobileNav.tsx), each visible at a
+ * different screen width via CSS only — never both at once — so the
+ * header stays at a fixed height across breakpoints instead of needing a
+ * second, shorter row on narrow phones. See the `labeled` prop below.
  */
 
 const STORAGE_KEY = "lb-theme";
@@ -38,7 +43,7 @@ function apply(theme: Theme) {
     ?.setAttribute("content", theme === "dark" ? DARK_THEME_COLOR : LIGHT_THEME_COLOR);
 }
 
-export function ThemeToggle() {
+export function ThemeToggle({ className = "", labeled = false }: { className?: string; labeled?: boolean }) {
   // A lazy initializer, not an effect: on the server (and on a first,
   // never-visited-before browser) this reads "light", matching the HTML
   // layout.tsx always sends. A returning visitor who chose dark gets "dark"
@@ -69,16 +74,34 @@ export function ThemeToggle() {
     }
   }
 
+  const label = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+  const icon = theme === "dark" ? <SunIcon /> : <MoonIcon />;
+
+  if (labeled) {
+    return (
+      <button
+        type="button"
+        onClick={toggle}
+        aria-pressed={theme === "dark"}
+        suppressHydrationWarning
+        className={`flex min-h-12 w-full items-center gap-3 border-b border-line py-2 text-left font-semibold text-ink ${className}`}
+      >
+        {icon}
+        {label}
+      </button>
+    );
+  }
+
   return (
     <button
       type="button"
       onClick={toggle}
       aria-pressed={theme === "dark"}
       suppressHydrationWarning
-      className="flex h-12 w-12 flex-none items-center justify-center rounded-xl border-2 border-ink text-ink hover:bg-surface"
+      className={`flex h-12 w-12 flex-none items-center justify-center rounded-xl border-2 border-ink text-ink hover:bg-surface ${className}`}
     >
-      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-      <span className="sr-only">{theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}</span>
+      {icon}
+      <span className="sr-only">{label}</span>
     </button>
   );
 }

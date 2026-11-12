@@ -48,7 +48,9 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            {/* Below sm:, this moves into the menu panel instead (MobileNav.tsx) —
+                there isn't room for it here next to the brand name and Menu button. */}
+            <ThemeToggle className="hidden sm:flex" />
             <Link href="/request-a-ride" className="btn btn-primary hidden sm:inline-flex">
               Request a ride
             </Link>
